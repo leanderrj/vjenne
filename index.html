@@ -890,6 +890,215 @@ footer {
   </div>
 </section>
 
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- SECTION 9: INKOMENSCENARIO'S                                -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<section class="section" id="s9">
+  <div class="article">
+    <span class="section-num">09 / Inkomenscenario's</span>
+    <h2 class="section-title">Vier mensen.<br/><em>Vier werkelijkheden.</em></h2>
+    <p class="section-deck">Niet iedereen ervaart de woningmarkt hetzelfde. Het hangt af van wanneer je geboren bent, wat je verdient — en of je al een woning hebt.</p>
+
+    <div class="body-copy">
+      <p>De gemiddelden in dit rapport verhullen grote onderlinge verschillen. Een eigenaar-bewoner die in 2010 kocht zit inmiddels op een overwaarde van ruim <strong>€150.000</strong>. Een huurder met een inkomen onder modaal is sindsdien alleen maar verder van de koopmarkt afgedreven. Hieronder vier inkomensprofielen — maandelijks besteedbaar, hypotheekcapaciteit en wat de woningmarkt op elk moment voor ze biedt.</p>
+    </div>
+
+    <div class="chart-card reveal">
+      <div class="chart-head">
+        <span class="chart-title">Maandelijks besteedbaar inkomen per scenario 2011–2035</span>
+        <span class="chart-sub">Netto/maand · CBS besteedbare inkomens · prognose gestippeld</span>
+      </div>
+      <div class="chart-body" style="height:260px"><canvas id="c-scenarios-inc"></canvas></div>
+      <div class="legend-row">
+        <div class="leg-item"><span class="leg-dash" style="background:#4ade80"></span>Eigenaar (gem.)</div>
+        <div class="leg-item"><span class="leg-dash" style="background:#e8c97e"></span>Alle huishoudens</div>
+        <div class="leg-item"><span class="leg-dash" style="background:#7c6af0"></span>Single / starter</div>
+        <div class="leg-item"><span class="leg-dash" style="background:#f87171"></span>Huurder (gem.)</div>
+      </div>
+    </div>
+
+    <div class="chart-card reveal">
+      <div class="chart-head">
+        <span class="chart-title">Hypotheekcapaciteit vs. woningprijs per scenario 2011–2035</span>
+        <span class="chart-sub">Max. hypotheek = 4,5× jaarinkomen · prognose gestippeld</span>
+      </div>
+      <div class="chart-body" style="height:280px"><canvas id="c-scenarios-hyp"></canvas></div>
+      <div class="legend-row">
+        <div class="leg-item"><span class="leg-dash" style="background:#4ade80"></span>Eigenaar max. hyp.</div>
+        <div class="leg-item"><span class="leg-dash" style="background:#e8c97e"></span>Huishouden max. hyp.</div>
+        <div class="leg-item"><span class="leg-dash" style="background:#7c6af0"></span>Single max. hyp.</div>
+        <div class="leg-item"><span class="leg-dash" style="background:#f87171"></span>Huurder max. hyp.</div>
+        <div class="leg-item"><span class="leg-dot" style="background:rgba(255,255,255,.5)"></span>Gem. woningprijs TW</div>
+      </div>
+    </div>
+
+    <div class="body-copy">
+      <p>In 2011 konden alle vier de groepen in theorie een woning kopen — eigenaren ruim, huishoudens krap, singles en huurders met hulpmiddelen (starterslening, spaargeld). In 2024 kan <strong>alleen een eigenaar-bewoner of tweeverdiener</strong> zonder aanvullende financiering een gemiddelde woning kopen. Singles en huurders zijn structureel buiten de markt gevallen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- SECTION 10: PERSONA'S / USER STORIES                        -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<section class="section" id="s10">
+  <div class="article">
+    <span class="section-num">10 / Verhalen</span>
+    <h2 class="section-title">Vier mensen<br/>uit <em>Vriezenveen.</em></h2>
+    <p class="section-deck">Fictieve maar datagedreven portretten. Gebaseerd op CBS-inkomensgroepen, BAG-woningdata en CBS verhuismobiliteit.</p>
+
+    <!-- Persona cards grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:2px;overflow:hidden;margin:28px 0" class="reveal">
+
+      <!-- Persona 1: Starter -->
+      <div style="background:var(--surface);padding:24px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Persona 01 · Starter</div>
+        <div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px">Lisa, 26</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:16px;font-family:var(--mono)">Verpleegkundige · Huurder · Alleenstaand</div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Lisa woont in een corporatiewoning aan de Beatrixstraat — gebouwd in 1968, 72m². Ze verdient <strong style="color:var(--t1)">€2.610/maand</strong> netto. Haar maximale hypotheek bedraagt €141k. De gemiddelde Vriezenveense woning kost €363k. Kloof: <strong style="color:var(--red)">€222k</strong>.</p>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Ze schrijft zich in voor de 12 appartementen aan de Almeloseweg. Ze staat zesde op de wachtlijst — maar de huurprijs van €1.150/maand voor vrije sector valt ook buiten haar bereik.</p>
+        <div style="background:var(--surface2);border-radius:1px;padding:12px 14px;font-size:11px;color:var(--t3)">
+          <strong style="color:var(--t1)">2035-prognose:</strong> Bij 3,5% inkomensgroei verdient Lisa dan €3.780/maand. Max. hyp. stijgt naar €204k. Woningprijs: €565k. Kloof: <span style="color:var(--red)">€361k</span>. Zonder beleidsingrepen: geen koopwoning.
+        </div>
+      </div>
+
+      <!-- Persona 2: Gezin -->
+      <div style="background:var(--surface);padding:24px;border-left:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Persona 02 · Gezin</div>
+        <div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px">Bas &amp; Marieke, 34/32</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:16px;font-family:var(--mono)">Installateur + deeltijd docent · Kopers · 2 kinderen</div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Tweeverdieners. Samen <strong style="color:var(--t1)">€82.000/jr</strong> besteedbaar. Max. hypotheek €369k — net genoeg voor een rijtjeshuis uit de jaren '80 op de Tulpenstraat (€338k). Ze kochten in 2019.</p>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Hun woning is nu €420k waard. Overwaarde: <strong style="color:var(--green)">€82k</strong> in vijf jaar. Ze denken over verbouwen of doorstromen naar een grotere woning in Westerhaar.</p>
+        <div style="background:var(--surface2);border-radius:1px;padding:12px 14px;font-size:11px;color:var(--t3)">
+          <strong style="color:var(--t1)">2035-prognose:</strong> Woning stijgt naar ~€580k. Als ze nu verkopen en elders kleiner wonen, houdt het gezin ruim €200k over. De woningmarkt werkt <span style="color:var(--green)">voor</span> hen.
+        </div>
+      </div>
+
+      <!-- Persona 3: Gepensioneerd -->
+      <div style="background:var(--surface);padding:24px;border-top:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Persona 03 · Gepensioneerd</div>
+        <div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px">Gerrit, 71</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:16px;font-family:var(--mono)">Gepensioneerd agrariër · Eigenaar · Alleenstaand (weduwnaar)</div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Gerrit woont in de gezinswoning uit 1974 aan de Kanaaldijk — 140m², WOZ €312k. Zijn AOW + pensioen is <strong style="color:var(--t1)">€2.100/maand</strong>. De woning is te groot nu de kinderen weg zijn.</p>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Hij wil kleiner wonen maar er zijn nauwelijks geschikte seniorenwoningen. De 12 appartementen aan de Almeloseweg zijn te duur voor huur; een passende koop onder €250k bestaat niet meer in Vriezenveen.</p>
+        <div style="background:var(--surface2);border-radius:1px;padding:12px 14px;font-size:11px;color:var(--t3)">
+          <strong style="color:var(--t1)">Impact op markt:</strong> Gerrit <em>wil</em> doorstromen maar <span style="color:var(--accent)">kan niet</span>. Zijn geblokkeerde woning zou een starter als Lisa ruimte geven. De <strong>doorstromingskloof</strong> kost de markt meer dan de bouwdoelstellingen oplossen.
+        </div>
+      </div>
+
+      <!-- Persona 4: Arbeidsmigrante -->
+      <div style="background:var(--surface);padding:24px;border-top:1px solid var(--border);border-left:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Persona 04 · Nieuwkomer</div>
+        <div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px">Katarzyna, 31</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:16px;font-family:var(--mono)">Productiemedewerker · Huurder (particulier) · Polen</div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Katarzyna werkt bij een voedingsbedrijf in Almelo en woont in een particuliere huurkamer in Vriezenveen voor <strong style="color:var(--t1)">€850/maand</strong>. Inkomen: €1.960/maand netto. Ze spaart €300/maand.</p>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">Ze behoort tot de CBS-categorie 'immigratie' — een van de +18 Polen die gemiddeld per jaar naar Twenterand komen. Sociale huur: wachtlijst. Koopmarkt: onbereikbaar zonder eigen vermogen. Vrije sector: nauwelijks aanbod onder €1.000.</p>
+        <div style="background:var(--surface2);border-radius:1px;padding:12px 14px;font-size:11px;color:var(--t3)">
+          <strong style="color:var(--t1)">2035-prognose:</strong> Als ze blijft en inkomensgroei volgt (+3,5%/jr), bouwt ze in 10 jaar ~€36k spaargeld op. Bij een woning van €565k blijft het verschil onoverbrugbaar zonder partner of extra vermogen.
+        </div>
+      </div>
+    </div>
+
+    <div class="pull">
+      <p>"De woningmarkt in Vriezenveen werkt als een <strong>vermogenspomp</strong>: wie al bezit, wint. Wie buiten staat, verliest elk jaar meer terrein."</p>
+      <cite>Eigen analyse o.b.v. CBS inkomensdata + BAG + Kadaster verkoopprijzen</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- SECTION 11: BOUWPLANNEN & POLITIEK                          -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<section class="section" id="s11">
+  <div class="article">
+    <span class="section-num">11 / Bouwplannen &amp; politiek</span>
+    <h2 class="section-title">Wat er gebouwd<br/><em>wordt</em> — en wat niet.</h2>
+    <p class="section-deck">Bekende bouwlocaties, politieke bouwbeloften en de kloof tussen plan en schop in de grond. Gemeenteraadsverkiezingen 18 maart 2026.</p>
+
+    <!-- Known projects -->
+    <div class="chart-card reveal">
+      <div class="chart-head">
+        <span class="chart-title">Bekende bouwlocaties Vriezenveen (2022–2026)</span>
+        <span class="chart-sub">Op basis van raadsbesluiten, bestemmingsplannen &amp; nieuwsberichten</span>
+      </div>
+      <div class="chart-body" style="padding:0;overflow-x:auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Locatie</th>
+              <th>Type</th>
+              <th>Woningen</th>
+              <th>Status</th>
+              <th>Bron</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Almeloseweg (synagoge)</td>
+              <td style="color:var(--accent)">Appartementen</td>
+              <td class="num">12</td>
+              <td style="color:var(--green)">Groen licht (RvS feb '25)</td>
+              <td style="font-size:10px">RTV Oost 06-02-2025</td>
+            </tr>
+            <tr>
+              <td>Nieuwe Daarlerveenseweg</td>
+              <td style="color:var(--accent)">Mix incl. flex</td>
+              <td class="num">55–60</td>
+              <td style="color:var(--accent2)">Grond aangekocht (€2,1M)</td>
+              <td style="font-size:10px">RTV Oost 19-12-2022</td>
+            </tr>
+            <tr>
+              <td>Vroomshoop (diverse)</td>
+              <td style="color:var(--accent)">Grondgebonden</td>
+              <td class="num">~80</td>
+              <td style="color:var(--green)">In uitvoering 2024–2025</td>
+              <td style="font-size:10px">CU verkiezingsprogramma</td>
+            </tr>
+            <tr>
+              <td>Den Ham / Westerhaar</td>
+              <td style="color:var(--accent)">Kern­woningen</td>
+              <td class="num">p.m.</td>
+              <td style="color:var(--t3)">Gepland (CU speerpunt)</td>
+              <td style="font-size:10px">ChristenUnie 2026</td>
+            </tr>
+            <tr>
+              <td>Centrum Vriezenveen</td>
+              <td style="color:var(--accent)">Herontwikkeling</td>
+              <td class="num">p.m.</td>
+              <td style="color:var(--t3)">Idee (VVD: oud-Rabobank)</td>
+              <td style="font-size:10px">VVD verkiezingsprogramma</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="body-copy">
+      <p>De concrete woningbouwpijplijn in Vriezenveen bedraagt op basis van bekende plannen <strong>67–72 woningen</strong> (Almeloseweg + Nieuwe Daarlerveenseweg) — bij een woningtekort van structureel honderden eenheden en een bevolkingsbehoefte van gemiddeld 90+ woningen per jaar. De locatie Nieuwe Daarlerveenseweg is nog niet eens onherroepelijk — de gemeenteraad moet nog de bestemming wijzigen.</p>
+    </div>
+
+    <!-- Party positions grid -->
+    <div class="chart-card reveal">
+      <div class="chart-head">
+        <span class="chart-title">Partijstandpunten woningbouw — gemeenteraadsverkiezingen 18 maart 2026</span>
+        <span class="chart-sub">Samenvatting verkiezingsprogramma's · Tubantia 11-02-2026</span>
+      </div>
+      <div class="chart-body" style="padding:20px">
+        <div id="party-positions"></div>
+      </div>
+    </div>
+
+    <div class="pull">
+      <p>"Elke partij belooft bouwen. Maar <strong>80 gegadigden</strong> voor 12 appartementen aan de Almeloseweg laten zien dat bouwen niet bijhoudt. De plannen in de pijplijn zijn goed voor één jaar vraag — niet voor een decennium."</p>
+      <cite>Eigen berekening o.b.v. RTV Oost nieuwsberichten + CBS woningvraag</cite>
+    </div>
+
+    <div class="body-copy">
+      <p>De gemeenteraadsverkiezingen van <strong>18 maart 2026</strong> draaien in Twenterand in hoge mate om wonen. Maar de politieke ambities stuiten op structurele knelpunten: lange procedures (Raad van State nam 15 maanden), hoge grondprijzen, en weerstand vanuit bestaande bewoners. Tegelijk signaleert de VVD een bestuurlijk integriteitsprobleem (NSOB-rapport) dat het vertrouwen in de uitvoering ondermijnt.</p>
+    </div>
+  </div>
+</section>
+
 <!-- SOURCES -->
 <div class="sources">
   <div class="wide">
@@ -924,6 +1133,16 @@ footer {
         <div class="src-id">PBL / CBS</div>
         <div class="src-title">Prognose-methode</div>
         <div class="src-body">Prognose 2026–2035: prijzen +3%/jr (gematigd scenario), inkomen +3,5%/jr. Bevolking op basis van PBL Primos 2024. Woningvraag o.b.v. huishoudensontwikkeling.</div>
+      </div>
+      <div class="source-card">
+        <div class="src-id">RTV Oost</div>
+        <div class="src-title">Lokaal nieuws woningbouw Vriezenveen</div>
+        <div class="src-body">Drie artikelen: synagoge-appartementen Almeloseweg (feb 2025), bezwaar buurman (nov 2024), weilandaankoop Nieuwe Daarlerveenseweg (dec 2022). Beschikbaar in data/news/.</div>
+      </div>
+      <div class="source-card">
+        <div class="src-id">Tubantia 2026</div>
+        <div class="src-title">Lijsttrekkers Twenterand — GR2026</div>
+        <div class="src-body">Verkiezingsprogramma's en speerpunten van 8 partijen voor gemeenteraadsverkiezingen 18 maart 2026. Auteur: Ferry de Goeijen. Zie data/news/lijsttrekkers-twenterand-2026.md.</div>
       </div>
     </div>
   </div>
@@ -1077,6 +1296,7 @@ document.addEventListener('DOMContentLoaded', () => {
   buildAffordTable();
   buildMigrationBars();
   buildIntlMigrationFlows();
+  buildPartyPositions();
   buildSectionDots();
   initScrollReveal();
 });
@@ -1391,6 +1611,64 @@ function initAllCharts() {
         label:ctx=>ctx.dataset.label+': '+ctx.raw?.toLocaleString('nl')
       }}}}
   });
+
+  // ── 15. Scenario inkomen/maand (4 personas) ──────────────
+  const scKC = KC.filter(r=>r.inc_single!=null);
+  new Chart(document.getElementById('c-scenarios-inc'), {
+    type:'line', data:{
+      labels: scKC.map(r=>r.jaar),
+      datasets:[
+        { label:'Eigenaar (gem.)', data:scKC.map(r=>Math.round(r.inc_eigen*1000/12)),
+          borderColor:'#4ade80', borderWidth:2, tension:0.3,
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+        { label:'Huishouden (gem.)', data:scKC.map(r=>Math.round(r.inc_jaar*1000/12)),
+          borderColor:'#e8c97e', borderWidth:2, tension:0.3,
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+        { label:'Single / starter', data:scKC.map(r=>Math.round(r.inc_single*1000/12)),
+          borderColor:'#7c6af0', borderWidth:2.5, tension:0.3,
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+        { label:'Huurder (gem.)', data:scKC.map(r=>Math.round(r.inc_huur*1000/12)),
+          borderColor:'#f87171', borderWidth:2, tension:0.3,
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+      ]
+    }, options:{...CD,
+      scales:{...CD.scales, y:{...CD.scales.y,
+        ticks:{...CD.scales.y.ticks, callback:v=>'€'+v.toLocaleString('nl')}}},
+      plugins:{...CD.plugins, tooltip:{...CD.plugins.tooltip, mode:'index', intersect:false, callbacks:{
+        label:ctx=>ctx.dataset.label+': €'+ctx.raw?.toLocaleString('nl')+'/mnd'
+      }}}}
+  });
+
+  // ── 16. Scenario hypotheekcapaciteit vs. woningprijs ────────
+  new Chart(document.getElementById('c-scenarios-hyp'), {
+    type:'line', data:{
+      labels: scKC.map(r=>r.jaar),
+      datasets:[
+        { label:'Prijs Twenterand', data:scKC.map(r=>PRIJZEN_TW[r.jaar]||null),
+          borderColor:'rgba(255,255,255,.55)', borderWidth:2.5, tension:0.3,
+          borderDash:[6,3],
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:[6,3]} },
+        { label:'Eigenaar max. hyp.', data:scKC.map(r=>r.inc_eigen*4.5*1000),
+          borderColor:'#4ade80', borderWidth:1.5, tension:0.3, fill:false,
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+        { label:'Huishouden max. hyp.', data:scKC.map(r=>r.inc_jaar*4.5*1000),
+          borderColor:'#e8c97e', borderWidth:1.5, tension:0.3, fill:false,
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+        { label:'Single max. hyp.', data:scKC.map(r=>r.inc_single*4.5*1000),
+          borderColor:'#7c6af0', borderWidth:2, tension:0.3,
+          fill:{target:0, below:'rgba(124,106,240,.1)'},
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+        { label:'Huurder max. hyp.', data:scKC.map(r=>r.inc_huur*4.5*1000),
+          borderColor:'#f87171', borderWidth:1.5, tension:0.3, fill:false,
+          segment:{borderDash:ctx=>scKC[ctx.p0DataIndex]?.prognose?[5,4]:undefined} },
+      ]
+    }, options:{...CD,
+      scales:{...CD.scales, y:{...CD.scales.y,
+        ticks:{...CD.scales.y.ticks, callback:fmtEur}}},
+      plugins:{...CD.plugins, tooltip:{...CD.plugins.tooltip, mode:'index', intersect:false, callbacks:{
+        label:ctx=>ctx.dataset.label+': '+fmtEur(ctx.raw)
+      }}}}
+  });
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1597,7 +1875,7 @@ function buildIntlMigrationFlows() {
 // SECTION NAVIGATION DOTS
 // ════════════════════════════════════════════════════════════
 
-const SECTIONS = ['s0','s1','s1b','s2','s2b','s2c','s3','s4','s5','s6','s7','s8'];
+const SECTIONS = ['s0','s1','s1b','s2','s2b','s2c','s3','s4','s5','s6','s7','s8','s9','s10','s11'];
 
 function buildSectionDots() {
   const el = document.getElementById('section-dots');
@@ -1631,6 +1909,65 @@ function initScrollReveal() {
 // ════════════════════════════════════════════════════════════
 // EXPORT
 // ════════════════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════════════
+// PARTY POSITIONS (s11)
+// ════════════════════════════════════════════════════════════
+
+const PARTY_DATA = [
+  { partij:'GBT',            kleur:'#e8c97e', zetels:'~7', bouwtempo:'Hoog',    focus:'Inbreiding + uitbreiding',      starter:'Ja — "recht, geen luxe"',   bijzonder:'Doorgaan met bouwagenda; servicepunt communicatie' },
+  { partij:'CDA',            kleur:'#60a5fa', zetels:'7',  bouwtempo:'Hoog',    focus:'Dorpen + zorgwoningen',         starter:'Ja — starters in eigen kern', bijzonder:'Levensloopgeschikte woningen, mantelzorgwoningen' },
+  { partij:'ChristenUnie',   kleur:'#4ade80', zetels:'4–5',bouwtempo:'Middel',  focus:'Kleinere kernen (Den Ham, WH)', starter:'Ja — met voorrang eigen inw.',bijzonder:'Verbinding ouderen–jongeren in nieuwbouwplannen' },
+  { partij:'VVD',            kleur:'#f59e0b', zetels:'+',  bouwtempo:'Middel',  focus:'Centrum + energietransitie',    starter:'Impliciet',                   bijzonder:'Centrumontwikkeling, opruimen oud-Rabobank Manitobaplein' },
+  { partij:'PVV',            kleur:'#f87171', zetels:'4',  bouwtempo:'Middel',  focus:'Eigen inwoners eerst',          starter:'Ja — maar geen statushouders', bijzonder:'Geen azc, geen voorrang statushouders op sociale huur' },
+  { partij:'PvT',            kleur:'#a78bfa', zetels:'p.m.',bouwtempo:'Laag',   focus:'Per dorp, kleinschalig',        starter:'Ja — maar bescheiden schaal',  bijzonder:'Geen grootschalige plannen; doorstroming ouderen' },
+  { partij:'PvdA-GL',        kleur:'#34d399', zetels:'3',  bouwtempo:'Middel',  focus:'Betaalbaar + duurzaam',         starter:'Ja — sociaal en groen',        bijzonder:'Kanaal Almelo–De Haandrik bewoners; groene economie' },
+  { partij:'SGP',            kleur:'#94a3b8', zetels:'2–3',bouwtempo:'Middel',  focus:'Jongeren + gezinnen in kernen', starter:'Ja — betaalbaar, eigen inw.',  bijzonder:'Noaberschap; steun agrariërs; duurzaamheid zonder ideologie' },
+];
+
+function buildPartyPositions() {
+  const el = document.getElementById('party-positions');
+  if (!el) return;
+
+  // Bouwtempo bar scale
+  const tempoMap = { 'Hoog':100, 'Middel':60, 'Laag':30 };
+
+  el.innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:6px 10px;color:var(--t3);font-size:9px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border2);white-space:nowrap">Partij</th>
+            <th style="text-align:left;padding:6px 10px;color:var(--t3);font-size:9px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border2);white-space:nowrap">Ambitie</th>
+            <th style="text-align:left;padding:6px 10px;color:var(--t3);font-size:9px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border2);white-space:nowrap">Starter?</th>
+            <th style="text-align:left;padding:6px 10px;color:var(--t3);font-size:9px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border2);white-space:nowrap">Focus</th>
+            <th style="text-align:right;padding:6px 10px;color:var(--t3);font-size:9px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border2)">Zetels</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${PARTY_DATA.map(p => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:8px 10px;white-space:nowrap">
+                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.kleur};margin-right:6px;vertical-align:middle"></span>
+                <strong style="color:var(--t1)">${p.partij}</strong>
+              </td>
+              <td style="padding:8px 10px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:60px;height:6px;background:var(--surface2);border-radius:1px;overflow:hidden">
+                    <div style="height:100%;width:${tempoMap[p.bouwtempo]}%;background:${p.kleur};opacity:.7"></div>
+                  </div>
+                  <span style="color:var(--t2);font-size:10px">${p.bouwtempo}</span>
+                </div>
+              </td>
+              <td style="padding:8px 10px;color:var(--t2);max-width:140px">${p.starter}</td>
+              <td style="padding:8px 10px;color:var(--t3);max-width:160px;font-size:10px">${p.focus}</td>
+              <td style="padding:8px 10px;text-align:right;font-family:var(--mono);color:var(--t1)">${p.zetels}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
 
 function exportCSV() {
   const headers = ['jaar','prijs_tw','prijs_nl','woz','bev','hh','hh_single','inc_jaar','inc_single','inc_eigenaar','inc_huurder','koop','hh_grootte','prognose'];
