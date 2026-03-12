@@ -843,7 +843,7 @@ footer {
     <div class="chart-card reveal">
       <div class="chart-head">
         <span class="chart-title">Verhuisstromen naar/van Twenterand</span>
-        <span class="chart-sub">CBS · positief = netto instroom · gem./jr</span>
+        <span class="chart-sub" id="mig-sub">CBS · positief = netto instroom · gem./jr 2011–2024</span>
       </div>
       <!-- Controls -->
       <div class="ctrl-row">
@@ -863,6 +863,19 @@ footer {
           <button class="ctrl-btn active" id="mig-scope-binnenl"  onclick="setMigScope('binnenl')">Binnenland</button>
           <button class="ctrl-btn"        id="mig-scope-intl"     onclick="setMigScope('intl')">Internationaal</button>
         </div>
+      </div>
+      <div class="ctrl-row" style="margin-top:8px;align-items:center;gap:12px;flex-wrap:wrap">
+        <div class="ctrl-group" style="flex:1;min-width:200px;align-items:center;gap:8px">
+          <span class="ctrl-label">Periode</span>
+          <span id="mig-year-from-label" style="font-family:var(--mono);font-size:12px;color:var(--t2);min-width:32px">2011</span>
+          <input type="range" id="mig-year-from" min="2011" max="2024" value="2011" step="1"
+            oninput="setMigYearRange()" style="flex:1;accent-color:#60a5fa;cursor:pointer">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t3)">—</span>
+          <input type="range" id="mig-year-to" min="2011" max="2024" value="2024" step="1"
+            oninput="setMigYearRange()" style="flex:1;accent-color:#60a5fa;cursor:pointer">
+          <span id="mig-year-to-label" style="font-family:var(--mono);font-size:12px;color:var(--t2);min-width:32px">2024</span>
+        </div>
+        <button class="ctrl-btn" id="mig-year-single-btn" onclick="toggleMigSingleYear()" style="font-size:10px;padding:3px 8px">Enkel jaar</button>
       </div>
       <div class="chart-body" style="padding:16px 20px">
         <div id="migration-bars"></div>
@@ -1583,7 +1596,7 @@ const WONINGVOORRAAD = [
   {jaar:2034,totaal:15000,p:true},{jaar:2035,totaal:15090,p:true},
 ];
 
-const MIGRATIE = [
+const MIGRATIE_LEGACY = [
   {label:'Almelo',       saldo:82,  type:'in'},
   {label:'Hardenberg',   saldo:45,  type:'in'},
   {label:'Hengelo',      saldo:38,  type:'in'},
@@ -1595,6 +1608,73 @@ const MIGRATIE = [
   {label:'Den Haag',     saldo:-19, type:'out'},
   {label:'Duitsland',    saldo:-12, type:'out'},
 ];
+
+// Per-year per-gemeente migration data (CBS 81734ned, 2011–2024)
+const MIG_PER_YEAR = {"2011": [{"l": "Hardenberg", "v": 95, "u": 74, "s": 21}, {"l": "Papendrecht", "v": 13, "u": 0, "s": 13}, {"l": "Almelo", "v": 142, "u": 131, "s": 11}, {"l": "Hengelo", "v": 15, "u": 26, "s": -11}, {"l": "Enschede", "v": 37, "u": 27, "s": 10}, {"l": "Emmen", "v": 12, "u": 3, "s": 9}, {"l": "Hellendoorn", "v": 50, "u": 59, "s": -9}, {"l": "IJsselstein", "v": 7, "u": 0, "s": 7}, {"l": "Deventer", "v": 9, "u": 15, "s": -6}, {"l": "Ede", "v": 8, "u": 2, "s": 6}, {"l": "Lochem", "v": 7, "u": 1, "s": 6}, {"l": "Nijmegen", "v": 6, "u": 0, "s": 6}, {"l": "Apeldoorn", "v": 10, "u": 5, "s": 5}, {"l": "Borne", "v": 3, "u": 8, "s": -5}, {"l": "Leidschendam-Voorburg", "v": 5, "u": 0, "s": 5}, {"l": "Dalfsen", "v": 6, "u": 10, "s": -4}, {"l": "Haaksbergen", "v": 0, "u": 4, "s": -4}, {"l": "Langedijk", "v": 4, "u": 0, "s": 4}, {"l": "Staphorst", "v": 0, "u": 4, "s": -4}, {"l": "Almere", "v": 0, "u": 3, "s": -3}, {"l": "Amsterdam", "v": 5, "u": 2, "s": 3}, {"l": "Berkelland", "v": 1, "u": 4, "s": -3}, {"l": "Dinkelland", "v": 1, "u": 4, "s": -3}, {"l": "Ermelo", "v": 0, "u": 3, "s": -3}, {"l": "Groningen", "v": 19, "u": 22, "s": -3}], "2012": [{"l": "Ommen", "v": 30, "u": 50, "s": -20}, {"l": "Enschede", "v": 44, "u": 57, "s": -13}, {"l": "Almelo", "v": 152, "u": 163, "s": -11}, {"l": "Hengelo", "v": 16, "u": 26, "s": -10}, {"l": "Apeldoorn", "v": 16, "u": 7, "s": 9}, {"l": "Hardenberg", "v": 71, "u": 80, "s": -9}, {"l": "Rijssen-Holten", "v": 28, "u": 19, "s": 9}, {"l": "Ede", "v": 2, "u": 9, "s": -7}, {"l": "Harderwijk", "v": 6, "u": 0, "s": 6}, {"l": "Hellendoorn", "v": 43, "u": 49, "s": -6}, {"l": "Delfzijl", "v": 5, "u": 0, "s": 5}, {"l": "Gouda", "v": 0, "u": 5, "s": -5}, {"l": "Renkum", "v": 6, "u": 1, "s": 5}, {"l": "De Ronde Venen", "v": 5, "u": 0, "s": 5}, {"l": "Almere", "v": 4, "u": 0, "s": 4}, {"l": "Berkelland", "v": 2, "u": 6, "s": -4}, {"l": "Dinkelland", "v": 1, "u": 5, "s": -4}, {"l": "Doetinchem", "v": 6, "u": 2, "s": 4}, {"l": "Hof van Twente", "v": 4, "u": 8, "s": -4}, {"l": "Amersfoort", "v": 6, "u": 3, "s": 3}, {"l": "Borne", "v": 2, "u": 5, "s": -3}, {"l": "Dalfsen", "v": 8, "u": 5, "s": 3}, {"l": "Haarlemmermeer", "v": 3, "u": 0, "s": 3}, {"l": "Hoogeveen", "v": 1, "u": 4, "s": -3}, {"l": "Kampen", "v": 4, "u": 7, "s": -3}], "2013": [{"l": "Enschede", "v": 30, "u": 48, "s": -18}, {"l": "Barneveld", "v": 0, "u": 9, "s": -9}, {"l": "Emmen", "v": 6, "u": 14, "s": -8}, {"l": "Hellendoorn", "v": 65, "u": 73, "s": -8}, {"l": "Hengelo", "v": 18, "u": 26, "s": -8}, {"l": "Losser", "v": 0, "u": 8, "s": -8}, {"l": "Neder-Betuwe", "v": 0, "u": 8, "s": -8}, {"l": "Hoogeveen", "v": 8, "u": 1, "s": 7}, {"l": "Rijssen-Holten", "v": 17, "u": 10, "s": 7}, {"l": "Amsterdam", "v": 6, "u": 12, "s": -6}, {"l": "Coevorden", "v": 0, "u": 6, "s": -6}, {"l": "Hardenberg", "v": 82, "u": 76, "s": 6}, {"l": "Hillegom", "v": 6, "u": 0, "s": 6}, {"l": "Oldebroek", "v": 7, "u": 1, "s": 6}, {"l": "Almelo", "v": 151, "u": 146, "s": 5}, {"l": "Boxmeer", "v": 0, "u": 5, "s": -5}, {"l": "Eindhoven", "v": 0, "u": 5, "s": -5}, {"l": "Geertruidenberg", "v": 0, "u": 5, "s": -5}, {"l": "Heerenveen", "v": 0, "u": 5, "s": -5}, {"l": "Deventer", "v": 17, "u": 13, "s": 4}, {"l": "Groningen", "v": 19, "u": 23, "s": -4}, {"l": "Leeuwarden", "v": 1, "u": 5, "s": -4}, {"l": "Molenwaard", "v": 5, "u": 1, "s": 4}, {"l": "Noordwijk", "v": 4, "u": 0, "s": 4}, {"l": "Amersfoort", "v": 0, "u": 3, "s": -3}], "2014": [{"l": "Enschede", "v": 34, "u": 54, "s": -20}, {"l": "Hengelo", "v": 16, "u": 35, "s": -19}, {"l": "Almelo", "v": 153, "u": 163, "s": -10}, {"l": "Emmen", "v": 4, "u": 14, "s": -10}, {"l": "Borne", "v": 2, "u": 11, "s": -9}, {"l": "Dalfsen", "v": 5, "u": 14, "s": -9}, {"l": "'s-Gravenhage", "v": 0, "u": 9, "s": -9}, {"l": "Groningen", "v": 17, "u": 24, "s": -7}, {"l": "Rotterdam", "v": 4, "u": 10, "s": -6}, {"l": "Alblasserdam", "v": 0, "u": 5, "s": -5}, {"l": "Coevorden", "v": 6, "u": 1, "s": 5}, {"l": "Drechterland", "v": 5, "u": 0, "s": 5}, {"l": "Dronten", "v": 6, "u": 1, "s": 5}, {"l": "Ferwerderadiel", "v": 5, "u": 0, "s": 5}, {"l": "Hof van Twente", "v": 6, "u": 1, "s": 5}, {"l": "Midden-Drenthe", "v": 0, "u": 5, "s": -5}, {"l": "Nijkerk", "v": 6, "u": 1, "s": 5}, {"l": "Hardenberg", "v": 64, "u": 68, "s": -4}, {"l": "Lansingerland", "v": 4, "u": 0, "s": 4}, {"l": "Leeuwarden", "v": 2, "u": 6, "s": -4}, {"l": "Lopik", "v": 4, "u": 0, "s": 4}, {"l": "Rijssen-Holten", "v": 16, "u": 12, "s": 4}, {"l": "Aa en Hunze", "v": 0, "u": 3, "s": -3}, {"l": "Alphen aan den Rijn", "v": 0, "u": 3, "s": -3}, {"l": "Amersfoort", "v": 4, "u": 1, "s": 3}], "2015": [{"l": "Almelo", "v": 132, "u": 158, "s": -26}, {"l": "Deventer", "v": 26, "u": 9, "s": 17}, {"l": "Hardenberg", "v": 83, "u": 100, "s": -17}, {"l": "Enschede", "v": 35, "u": 50, "s": -15}, {"l": "Dinkelland", "v": 2, "u": 13, "s": -11}, {"l": "Ommen", "v": 34, "u": 44, "s": -10}, {"l": "Hengelo", "v": 12, "u": 20, "s": -8}, {"l": "Rijssen-Holten", "v": 15, "u": 23, "s": -8}, {"l": "Borne", "v": 13, "u": 6, "s": 7}, {"l": "Haarlemmermeer", "v": 8, "u": 1, "s": 7}, {"l": "Hellendoorn", "v": 65, "u": 58, "s": 7}, {"l": "Gouda", "v": 1, "u": 7, "s": -6}, {"l": "Hof van Twente", "v": 6, "u": 12, "s": -6}, {"l": "Losser", "v": 7, "u": 1, "s": 6}, {"l": "Rotterdam", "v": 1, "u": 7, "s": -6}, {"l": "Amsterdam", "v": 3, "u": 8, "s": -5}, {"l": "Coevorden", "v": 2, "u": 7, "s": -5}, {"l": "Leusden", "v": 1, "u": 6, "s": -5}, {"l": "Bronckhorst", "v": 0, "u": 4, "s": -4}, {"l": "Duiven", "v": 0, "u": 4, "s": -4}, {"l": "Arnhem", "v": 9, "u": 6, "s": 3}, {"l": "Borger-Odoorn", "v": 6, "u": 9, "s": -3}, {"l": "Bussum", "v": 3, "u": 0, "s": 3}, {"l": "Ede", "v": 1, "u": 4, "s": -3}, {"l": "Emmen", "v": 7, "u": 4, "s": 3}], "2016": [{"l": "Almelo", "v": 108, "u": 158, "s": -50}, {"l": "Hardenberg", "v": 85, "u": 109, "s": -24}, {"l": "Rijssen-Holten", "v": 33, "u": 11, "s": 22}, {"l": "Noordenveld", "v": 17, "u": 0, "s": 17}, {"l": "Nijmegen", "v": 2, "u": 14, "s": -12}, {"l": "Borne", "v": 15, "u": 5, "s": 10}, {"l": "Apeldoorn", "v": 4, "u": 13, "s": -9}, {"l": "Dinkelland", "v": 15, "u": 6, "s": 9}, {"l": "Hellendoorn", "v": 79, "u": 71, "s": 8}, {"l": "Kampen", "v": 0, "u": 8, "s": -8}, {"l": "Groningen", "v": 16, "u": 9, "s": 7}, {"l": "Raalte", "v": 0, "u": 7, "s": -7}, {"l": "Haarlemmermeer", "v": 9, "u": 3, "s": 6}, {"l": "Nieuwegein", "v": 6, "u": 0, "s": 6}, {"l": "Amsterdam", "v": 6, "u": 11, "s": -5}, {"l": "Deventer", "v": 8, "u": 12, "s": -4}, {"l": "Emmen", "v": 3, "u": 7, "s": -4}, {"l": "Hardinxveld-Giessendam", "v": 4, "u": 0, "s": 4}, {"l": "Heerlen", "v": 0, "u": 4, "s": -4}, {"l": "Leidschendam-Voorburg", "v": 0, "u": 4, "s": -4}, {"l": "Oldebroek", "v": 1, "u": 5, "s": -4}, {"l": "De Bilt", "v": 4, "u": 1, "s": 3}, {"l": "Dronten", "v": 3, "u": 0, "s": 3}, {"l": "Eindhoven", "v": 2, "u": 5, "s": -3}, {"l": "Meppel", "v": 1, "u": 4, "s": -3}], "2017": [{"l": "Almelo", "v": 181, "u": 141, "s": 40}, {"l": "Borne", "v": 5, "u": 22, "s": -17}, {"l": "Noordenveld", "v": 17, "u": 2, "s": 15}, {"l": "Hardenberg", "v": 105, "u": 93, "s": 12}, {"l": "Hoogezand-Sappemeer", "v": 0, "u": 11, "s": -11}, {"l": "Groningen", "v": 7, "u": 17, "s": -10}, {"l": "Enschede", "v": 25, "u": 34, "s": -9}, {"l": "Haarlemmermeer", "v": 9, "u": 0, "s": 9}, {"l": "Apeldoorn", "v": 9, "u": 17, "s": -8}, {"l": "Hellendoorn", "v": 107, "u": 99, "s": 8}, {"l": "Ommen", "v": 30, "u": 38, "s": -8}, {"l": "Heerlen", "v": 7, "u": 0, "s": 7}, {"l": "Harderwijk", "v": 0, "u": 6, "s": -6}, {"l": "Nijmegen", "v": 7, "u": 13, "s": -6}, {"l": "Ede", "v": 1, "u": 6, "s": -5}, {"l": "Emmen", "v": 5, "u": 10, "s": -5}, {"l": "Oldenzaal", "v": 3, "u": 8, "s": -5}, {"l": "Doesburg", "v": 0, "u": 4, "s": -4}, {"l": "Hof van Twente", "v": 8, "u": 4, "s": 4}, {"l": "Katwijk", "v": 0, "u": 4, "s": -4}, {"l": "Moerdijk", "v": 0, "u": 4, "s": -4}, {"l": "Nijkerk", "v": 4, "u": 0, "s": 4}, {"l": "Rijssen-Holten", "v": 18, "u": 14, "s": 4}, {"l": "Rotterdam", "v": 7, "u": 3, "s": 4}, {"l": "Steenwijkerland", "v": 4, "u": 0, "s": 4}], "2018": [{"l": "Almelo", "v": 171, "u": 209, "s": -38}, {"l": "Hardenberg", "v": 72, "u": 97, "s": -25}, {"l": "Ommen", "v": 31, "u": 53, "s": -22}, {"l": "Rijssen-Holten", "v": 18, "u": 33, "s": -15}, {"l": "Amsterdam", "v": 8, "u": 20, "s": -12}, {"l": "Hengelo", "v": 28, "u": 38, "s": -10}, {"l": "Borne", "v": 2, "u": 11, "s": -9}, {"l": "Groningen", "v": 13, "u": 22, "s": -9}, {"l": "Dalfsen", "v": 7, "u": 15, "s": -8}, {"l": "Eindhoven", "v": 1, "u": 9, "s": -8}, {"l": "Haarlemmermeer", "v": 11, "u": 3, "s": 8}, {"l": "Capelle aan den IJssel", "v": 0, "u": 6, "s": -6}, {"l": "Coevorden", "v": 11, "u": 5, "s": 6}, {"l": "Deventer", "v": 9, "u": 15, "s": -6}, {"l": "Haaksbergen", "v": 0, "u": 5, "s": -5}, {"l": "Hellendoorn", "v": 88, "u": 84, "s": 4}, {"l": "Hillegom", "v": 4, "u": 0, "s": 4}, {"l": "Hof van Twente", "v": 7, "u": 3, "s": 4}, {"l": "Huizen", "v": 4, "u": 0, "s": 4}, {"l": "Leeuwarden", "v": 3, "u": 7, "s": -4}, {"l": "Nijmegen", "v": 3, "u": 7, "s": -4}, {"l": "Rijswijk", "v": 5, "u": 1, "s": 4}, {"l": "Roerdalen", "v": 0, "u": 4, "s": -4}, {"l": "Brummen", "v": 3, "u": 0, "s": 3}, {"l": "Delft", "v": 0, "u": 3, "s": -3}], "2019": [{"l": "Enschede", "v": 60, "u": 33, "s": 27}, {"l": "Emmen", "v": 7, "u": 23, "s": -16}, {"l": "Ommen", "v": 47, "u": 60, "s": -13}, {"l": "Haarlemmermeer", "v": 13, "u": 2, "s": 11}, {"l": "Deventer", "v": 8, "u": 17, "s": -9}, {"l": "Almelo", "v": 155, "u": 163, "s": -8}, {"l": "Apeldoorn", "v": 14, "u": 6, "s": 8}, {"l": "Hardenberg", "v": 107, "u": 101, "s": 6}, {"l": "Hellendoorn", "v": 97, "u": 91, "s": 6}, {"l": "Rijssen-Holten", "v": 15, "u": 9, "s": 6}, {"l": "S\u00fadwest-Frysl\u00e2n", "v": 0, "u": 6, "s": -6}, {"l": "Borne", "v": 10, "u": 15, "s": -5}, {"l": "Hengelo", "v": 27, "u": 32, "s": -5}, {"l": "Losser", "v": 3, "u": 8, "s": -5}, {"l": "Meppel", "v": 1, "u": 6, "s": -5}, {"l": "Oldebroek", "v": 2, "u": 7, "s": -5}, {"l": "Rotterdam", "v": 5, "u": 0, "s": 5}, {"l": "Aalten", "v": 4, "u": 0, "s": 4}, {"l": "Almere", "v": 4, "u": 0, "s": 4}, {"l": "Amersfoort", "v": 0, "u": 4, "s": -4}, {"l": "Groningen", "v": 15, "u": 19, "s": -4}, {"l": "Hoogeveen", "v": 10, "u": 6, "s": 4}, {"l": "Kampen", "v": 5, "u": 1, "s": 4}, {"l": "Maastricht", "v": 0, "u": 4, "s": -4}, {"l": "Midden-Drenthe", "v": 5, "u": 1, "s": 4}], "2020": [{"l": "Ommen", "v": 32, "u": 58, "s": -26}, {"l": "Hardenberg", "v": 90, "u": 112, "s": -22}, {"l": "Hellendoorn", "v": 112, "u": 96, "s": 16}, {"l": "'s-Gravenhage", "v": 16, "u": 2, "s": 14}, {"l": "Apeldoorn", "v": 13, "u": 2, "s": 11}, {"l": "Dinkelland", "v": 1, "u": 11, "s": -10}, {"l": "Dalfsen", "v": 13, "u": 5, "s": 8}, {"l": "Rijssen-Holten", "v": 23, "u": 30, "s": -7}, {"l": "Rijswijk", "v": 7, "u": 0, "s": 7}, {"l": "Emmen", "v": 15, "u": 9, "s": 6}, {"l": "Groningen", "v": 13, "u": 19, "s": -6}, {"l": "'s-Hertogenbosch", "v": 6, "u": 1, "s": 5}, {"l": "Lochem", "v": 2, "u": 7, "s": -5}, {"l": "Midden-Drenthe", "v": 0, "u": 5, "s": -5}, {"l": "Pekela", "v": 0, "u": 5, "s": -5}, {"l": "Rotterdam", "v": 8, "u": 3, "s": 5}, {"l": "Alphen aan den Rijn", "v": 0, "u": 4, "s": -4}, {"l": "Coevorden", "v": 8, "u": 4, "s": 4}, {"l": "Dronten", "v": 4, "u": 0, "s": 4}, {"l": "Enschede", "v": 41, "u": 37, "s": 4}, {"l": "Hellevoetsluis", "v": 4, "u": 0, "s": 4}, {"l": "Oldenzaal", "v": 2, "u": 6, "s": -4}, {"l": "Berkelland", "v": 1, "u": 4, "s": -3}, {"l": "Doetinchem", "v": 0, "u": 3, "s": -3}, {"l": "Dordrecht", "v": 3, "u": 0, "s": 3}], "2021": [{"l": "Almelo", "v": 162, "u": 139, "s": 23}, {"l": "Enschede", "v": 23, "u": 37, "s": -14}, {"l": "Amersfoort", "v": 13, "u": 0, "s": 13}, {"l": "Amsterdam", "v": 2, "u": 11, "s": -9}, {"l": "Hardenberg", "v": 110, "u": 101, "s": 9}, {"l": "Olst-Wijhe", "v": 10, "u": 1, "s": 9}, {"l": "Hellendoorn", "v": 67, "u": 74, "s": -7}, {"l": "Arnhem", "v": 3, "u": 9, "s": -6}, {"l": "Helmond", "v": 7, "u": 1, "s": 6}, {"l": "Lochem", "v": 8, "u": 2, "s": 6}, {"l": "De Ronde Venen", "v": 6, "u": 0, "s": 6}, {"l": "Altena", "v": 5, "u": 0, "s": 5}, {"l": "Haaksbergen", "v": 1, "u": 6, "s": -5}, {"l": "Molenlanden", "v": 6, "u": 1, "s": 5}, {"l": "Nijmegen", "v": 1, "u": 6, "s": -5}, {"l": "Oldenzaal", "v": 5, "u": 0, "s": 5}, {"l": "Dalfsen", "v": 7, "u": 3, "s": 4}, {"l": "Hattem", "v": 4, "u": 0, "s": 4}, {"l": "'s-Hertogenbosch", "v": 0, "u": 4, "s": -4}, {"l": "Lelystad", "v": 5, "u": 1, "s": 4}, {"l": "Losser", "v": 6, "u": 2, "s": 4}, {"l": "Rijssen-Holten", "v": 20, "u": 24, "s": -4}, {"l": "Amstelveen", "v": 0, "u": 3, "s": -3}, {"l": "Eindhoven", "v": 3, "u": 0, "s": 3}, {"l": "Groningen", "v": 12, "u": 15, "s": -3}], "2022": [{"l": "Enschede", "v": 52, "u": 84, "s": -32}, {"l": "Hellendoorn", "v": 82, "u": 54, "s": 28}, {"l": "Almelo", "v": 120, "u": 133, "s": -13}, {"l": "Coevorden", "v": 1, "u": 13, "s": -12}, {"l": "Ommen", "v": 36, "u": 48, "s": -12}, {"l": "Barneveld", "v": 11, "u": 1, "s": 10}, {"l": "Hardenberg", "v": 78, "u": 88, "s": -10}, {"l": "Eemsdelta", "v": 8, "u": 0, "s": 8}, {"l": "Haarlemmermeer", "v": 8, "u": 0, "s": 8}, {"l": "Rijssen-Holten", "v": 11, "u": 19, "s": -8}, {"l": "Almere", "v": 8, "u": 1, "s": 7}, {"l": "Hengelo", "v": 35, "u": 28, "s": 7}, {"l": "Losser", "v": 3, "u": 10, "s": -7}, {"l": "Deventer", "v": 16, "u": 10, "s": 6}, {"l": "Borne", "v": 3, "u": 8, "s": -5}, {"l": "Dordrecht", "v": 5, "u": 0, "s": 5}, {"l": "Kampen", "v": 10, "u": 5, "s": 5}, {"l": "Oldenzaal", "v": 2, "u": 7, "s": -5}, {"l": "Papendrecht", "v": 5, "u": 0, "s": 5}, {"l": "Purmerend", "v": 6, "u": 1, "s": 5}, {"l": "Steenwijkerland", "v": 1, "u": 6, "s": -5}, {"l": "Aalsmeer", "v": 4, "u": 0, "s": 4}, {"l": "Dinkelland", "v": 10, "u": 14, "s": -4}, {"l": "Echt-Susteren", "v": 2, "u": 6, "s": -4}, {"l": "Heiloo", "v": 4, "u": 0, "s": 4}], "2023": [{"l": "Groningen", "v": 11, "u": 41, "s": -30}, {"l": "Hardenberg", "v": 83, "u": 113, "s": -30}, {"l": "Almelo", "v": 201, "u": 183, "s": 18}, {"l": "Enschede", "v": 59, "u": 44, "s": 15}, {"l": "Rotterdam", "v": 16, "u": 2, "s": 14}, {"l": "Het Hogeland", "v": 12, "u": 0, "s": 12}, {"l": "Dronten", "v": 13, "u": 3, "s": 10}, {"l": "Rijssen-Holten", "v": 11, "u": 21, "s": -10}, {"l": "Steenwijkerland", "v": 3, "u": 11, "s": -8}, {"l": "Eindhoven", "v": 2, "u": 9, "s": -7}, {"l": "Assen", "v": 7, "u": 1, "s": 6}, {"l": "Barneveld", "v": 1, "u": 7, "s": -6}, {"l": "Deventer", "v": 13, "u": 7, "s": 6}, {"l": "Harderwijk", "v": 0, "u": 6, "s": -6}, {"l": "Hoogeveen", "v": 12, "u": 6, "s": 6}, {"l": "Dalfsen", "v": 11, "u": 6, "s": 5}, {"l": "Eemsdelta", "v": 5, "u": 0, "s": 5}, {"l": "'s-Gravenhage", "v": 8, "u": 3, "s": 5}, {"l": "Kampen", "v": 5, "u": 0, "s": 5}, {"l": "Meppel", "v": 1, "u": 6, "s": -5}, {"l": "Ommen", "v": 38, "u": 33, "s": 5}, {"l": "Amersfoort", "v": 7, "u": 3, "s": 4}, {"l": "Apeldoorn", "v": 6, "u": 2, "s": 4}, {"l": "Dinkelland", "v": 9, "u": 5, "s": 4}, {"l": "Haarlem", "v": 4, "u": 0, "s": 4}], "2024": [{"l": "Hengelo", "v": 91, "u": 26, "s": 65}, {"l": "Almelo", "v": 157, "u": 179, "s": -22}, {"l": "Groningen", "v": 9, "u": 27, "s": -18}, {"l": "Hardenberg", "v": 67, "u": 84, "s": -17}, {"l": "Oldenzaal", "v": 1, "u": 12, "s": -11}, {"l": "Aalten", "v": 10, "u": 0, "s": 10}, {"l": "Kampen", "v": 11, "u": 1, "s": 10}, {"l": "Losser", "v": 10, "u": 2, "s": 8}, {"l": "Ommen", "v": 25, "u": 33, "s": -8}, {"l": "Raalte", "v": 11, "u": 5, "s": 6}, {"l": "Dinkelland", "v": 16, "u": 11, "s": 5}, {"l": "Geldrop-Mierlo", "v": 0, "u": 5, "s": -5}, {"l": "Hof van Twente", "v": 3, "u": 8, "s": -5}, {"l": "Meppel", "v": 5, "u": 0, "s": 5}, {"l": "Rotterdam", "v": 6, "u": 1, "s": 5}, {"l": "Altena", "v": 4, "u": 0, "s": 4}, {"l": "Amsterdam", "v": 7, "u": 3, "s": 4}, {"l": "Haarlem", "v": 4, "u": 0, "s": 4}, {"l": "Hellendoorn", "v": 80, "u": 84, "s": -4}, {"l": "Lelystad", "v": 5, "u": 1, "s": 4}, {"l": "Nijkerk", "v": 4, "u": 0, "s": 4}, {"l": "Nijmegen", "v": 5, "u": 9, "s": -4}, {"l": "Aa en Hunze", "v": 5, "u": 2, "s": 3}, {"l": "Assen", "v": 1, "u": 4, "s": -3}, {"l": "De Fryske Marren", "v": 3, "u": 0, "s": 3}]};
+
+// Year range state
+let migYearFrom = 2011;
+let migYearTo = 2024;
+let migSingleYear = false;
+
+function setMigYearRange() {
+  let f = parseInt(document.getElementById('mig-year-from').value);
+  let t = parseInt(document.getElementById('mig-year-to').value);
+  if (f > t) { const tmp=f; f=t; t=tmp; document.getElementById('mig-year-from').value=f; document.getElementById('mig-year-to').value=t; }
+  migYearFrom = f; migYearTo = t;
+  document.getElementById('mig-year-from-label').textContent = f;
+  document.getElementById('mig-year-to-label').textContent = t;
+  const sub = document.getElementById('mig-sub');
+  if (sub) sub.textContent = f===t ? `CBS · positief = netto instroom · ${f}` : `CBS · positief = netto instroom · gem./jr ${f}–${t}`;
+  renderMigBars();
+}
+
+function toggleMigSingleYear() {
+  migSingleYear = !migSingleYear;
+  const btn = document.getElementById('mig-year-single-btn');
+  btn.classList.toggle('active', migSingleYear);
+  const fromEl = document.getElementById('mig-year-from');
+  const toEl = document.getElementById('mig-year-to');
+  if (migSingleYear) {
+    toEl.style.display = 'none';
+    document.getElementById('mig-year-to-label').style.display = 'none';
+    document.querySelectorAll('.ctrl-row span').forEach(s => { if(s.textContent==='—') s.style.display='none'; });
+    migYearTo = migYearFrom;
+    toEl.value = fromEl.value;
+  } else {
+    toEl.style.display = '';
+    document.getElementById('mig-year-to-label').style.display = '';
+    document.querySelectorAll('.ctrl-row span').forEach(s => { if(s.textContent==='—') s.style.display=''; });
+    migYearTo = 2024; toEl.value = 2024;
+    document.getElementById('mig-year-to-label').textContent = '2024';
+  }
+  setMigYearRange();
+}
+
+// Aggregate MIG_PER_YEAR data for the selected range → MIGRATIE-compatible array
+function getMigratieForRange() {
+  const agg = {};
+  const nYears = migYearTo - migYearFrom + 1;
+  for (let y = migYearFrom; y <= migYearTo; y++) {
+    const key = String(y);
+    const entries = MIG_PER_YEAR[key] || [];
+    for (const e of entries) {
+      if (!agg[e.l]) agg[e.l] = {ves:0, vert:0};
+      agg[e.l].ves += (e.v || 0);
+      agg[e.l].vert += (e.u || 0);
+    }
+  }
+  const result = [];
+  for (const [label, vals] of Object.entries(agg)) {
+    const saldo = nYears > 1 ? Math.round((vals.ves - vals.vert) / nYears) : vals.ves - vals.vert;
+    if (saldo === 0) continue;
+    result.push({label, saldo, type: saldo > 0 ? 'in' : 'out', ves: vals.ves, vert: vals.vert});
+  }
+  result.sort((a,b) => Math.abs(b.saldo) - Math.abs(a.saldo));
+  return result.slice(0, 20);
+}
+
+const MIGRATIE = getMigratieForRange();
 
 // Bouwjaar eras (from compact.js analysis)
 const BOUWJAAR_ERAS = [
@@ -2431,7 +2511,7 @@ function setMigScope(s) {
 function renderMigBars() {
   const el = document.getElementById('migration-bars');
   if (!el) return;
-  const src = migScope === 'binnenl' ? MIGRATIE : MIGRATIE_INTL;
+  const src = migScope === 'binnenl' ? getMigratieForRange() : MIGRATIE_INTL;
   let data = src.filter(m => migFilter === 'all' ? true : m.type === migFilter);
   if (migSort === 'saldo') data = [...data].sort((a,b) => Math.abs(b.saldo)-Math.abs(a.saldo));
   else data = [...data].sort((a,b) => a.label.localeCompare(b.label));
@@ -2440,10 +2520,11 @@ function renderMigBars() {
     const pct = Math.abs(m.saldo) / maxAbs * 100;
     const color = m.type === 'in' ? '#4ade80' : '#f87171';
     const sign = m.saldo > 0 ? '+' : '';
+    const detail = m.ves != null ? ` title="vestiging: ${m.ves}, vertrek: ${m.vert}"` : '';
     const flag = m.vlag ? `<span style="font-size:12px">${m.vlag}</span>` : '';
     const note = m.noot ? `<span style="font-size:9px;color:var(--t3);margin-left:4px">${m.noot}</span>` : '';
     return `
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"${detail}>
         ${flag}
         <span style="font-size:11px;color:var(--t2);width:82px;flex-shrink:0;font-family:var(--mono)">${m.label}${note}</span>
         <div style="flex:1;height:22px;background:var(--surface2);border-radius:1px;overflow:hidden;position:relative">
