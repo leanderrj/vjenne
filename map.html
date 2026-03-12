@@ -56,6 +56,17 @@
   .topbar-pill:hover { border-color:var(--accent); color:var(--accent); }
   .topbar-pill.active { background:var(--accent); color:#0a0a0f; border-color:var(--accent); font-weight:600; }
   .topbar-sep { width:1px; height:22px; background:var(--border); margin:0 10px; }
+  .kern-select {
+    background:var(--surface2); border:1px solid var(--border2);
+    border-radius:2px; color:var(--t2); font-size:10px; font-weight:500;
+    font-family:'Inter',sans-serif; letter-spacing:.04em;
+    padding:4px 22px 4px 8px; cursor:pointer; outline:none;
+    -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23505068'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 6px center;
+    transition:border-color .15s,color .15s;
+  }
+  .kern-select:hover, .kern-select:focus { border-color:var(--accent); color:var(--accent); }
 
   /* ── Left panel ── */
   #left-panel {
@@ -306,7 +317,6 @@
     #topbar h1 { font-size:14px; margin-right:8px; }
     .topbar-sep { margin:0 6px; }
     #style-light, #style-sat { display:none; }
-    #btn-3d { display:none; }
 
     /* Left panel: collapsed to a bottom drawer on mobile */
     #left-panel {
@@ -430,8 +440,15 @@
 
   <div class="topbar-sep"></div>
 
-  <!-- 3D toggle -->
-  <button class="topbar-pill" id="btn-3d" onclick="toggle3D()">3D</button>
+  <select class="kern-select" id="kern-select" onchange="flyToKern(this.value)" title="Vliegen naar kern">
+    <option value="">→ Kern</option>
+    <option value="vriezenveen">Vriezenveen</option>
+    <option value="westerhaar">Westerhaar</option>
+    <option value="denham">Den Ham</option>
+    <option value="bruinehaar">Bruinehaar</option>
+    <option value="vriezenveensewijk">Vr.veensewijk</option>
+    <option value="marienberg">Mariënberg</option>
+  </select>
 
   <div class="topbar-sep"></div>
 
@@ -814,7 +831,6 @@ function resetMapIncome() {
 let playing = false, playTimer = null;
 let colorMode = 'prijs';
 let currentStyle = 'dark';
-let tilt3D = false;
 let layerOn = { prices:true, buildings:true, migration:true, newbuilds:false };
 let _prevGemeenteEra = null;
 
@@ -833,14 +849,13 @@ const map = new maplibregl.Map({
   container: 'map',
   style: MAP_STYLES.dark,
   center: [VV.lng, VV.lat],
-  zoom: 13.5, pitch: 48, bearing: -18, antialias: true,
+  zoom: 13.5, pitch: 0, bearing: 0, antialias: true,
 });
 
 map.addControl(new maplibregl.NavigationControl({showCompass:false}), 'bottom-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}), 'bottom-left');
 
 map.on('load', () => {
-  add3DBuildings();
   addPriceHeatmap();
   addBuildingDots();
   addNewBuildsLayer();
@@ -851,34 +866,7 @@ map.on('load', () => {
   onYear(currentYear);
 });
 
-// ── 3D buildings ───────────────────────────────────────────────
-function add3DBuildings() {
-  if (map.getLayer('3d-buildings')) return;
-  // Detect the vector source that carries building footprints
-  const style = map.getStyle();
-  const sources = Object.keys(style.sources || {});
-  // openmaptiles = Carto Dark / Stadia; carto = Carto Voyager/Light
-  const bldgSource = sources.find(s => s === 'openmaptiles' || s === 'carto');
-  if (!bldgSource) return; // satellite tiles — no building vector data
-  // Verify the source actually has a building source-layer
-  const hasBldg = style.layers.some(l => l['source-layer'] === 'building' && l.source === bldgSource);
-  if (!hasBldg) return;
-  // Insert below the first symbol layer so labels stay on top
-  let labelLayer;
-  for (const l of style.layers) { if (l.type === 'symbol' && l.layout?.['text-field']) { labelLayer = l.id; break; } }
-  try {
-    map.addLayer({
-      id: '3d-buildings', source: bldgSource, 'source-layer': 'building',
-      type: 'fill-extrusion', minzoom: 14,
-      paint: {
-        'fill-extrusion-color': '#1a1a2e',
-        'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 8],
-        'fill-extrusion-base':   ['coalesce', ['get', 'render_min_height'], 0],
-        'fill-extrusion-opacity': 0.65
-      }
-    }, labelLayer);
-  } catch(e) { /* source-layer may not exist in this style variant — safe to ignore */ }
-}
+
 
 // ── WOZ heatmap ────────────────────────────────────────────────
 function buildPriceGeoJSON() {
@@ -1031,7 +1019,6 @@ function addBuildingDots() {
 // ── New builds dedicated layer (post-2015, pulsing) ────────────
 function addNewBuildsLayer() {
   if (map.getSource('newbuild-src')) return;
-  if (newbuildAnimFrame) { cancelAnimationFrame(newbuildAnimFrame); newbuildAnimFrame = null; }
   const geo = {
     type: 'FeatureCollection',
     features: PDOK_COORDS
@@ -1110,8 +1097,6 @@ let newbuildAnimFrame = null;
 
 function addMigrationArcs() {
   if (map.getSource('arc-src')) return;
-  // Cancel any existing animation loop before starting a fresh one
-  if (arcAnimFrame) { cancelAnimationFrame(arcAnimFrame); arcAnimFrame = null; }
   map.addSource('arc-src', { type:'geojson', data:buildArcGeoJSON(currentYear) });
 
   // Glow
@@ -1419,11 +1404,19 @@ function setStyle(s) {
   ['dark','light','sat'].forEach(id => {
     document.getElementById(`style-${id}`)?.classList.toggle('active', id === s);
   });
+
+  // Cancel animation loops NOW — before style wipe — so they don't call
+  // setPaintProperty on layers that are about to disappear.
+  if (newbuildAnimFrame) { cancelAnimationFrame(newbuildAnimFrame); newbuildAnimFrame = null; }
+  if (arcAnimFrame)      { cancelAnimationFrame(arcAnimFrame);      arcAnimFrame = null; }
+
+  // Remove arc markers immediately so they don't dangle over the new style
+  arcMarkers.forEach(m => m.remove());
+  arcMarkers = [];
+
   map.setStyle(MAP_STYLES[s]);
   map.once('style.load', () => {
-    // Each add* function guards against double-add via getSource/getLayer.
-    // After setStyle all sources+layers are wiped, so the guards let them re-add.
-    try { add3DBuildings();    } catch(e) { console.warn('3d-buildings:', e); }
+    // After setStyle all sources+layers are wiped; guards in add*() let them re-add.
     try { addPriceHeatmap();   } catch(e) { console.warn('price-heat:', e); }
     try { addBuildingDots();   } catch(e) { console.warn('bldg-layer:', e); }
     try { addNewBuildsLayer(); } catch(e) { console.warn('newbuilds:', e); }
@@ -1435,10 +1428,29 @@ function setStyle(s) {
   });
 }
 
-function toggle3D() {
-  tilt3D = !tilt3D;
-  document.getElementById('btn-3d')?.classList.toggle('active', tilt3D);
-  map.easeTo({ pitch: tilt3D ? 52 : 0, duration: 600 });
+
+
+// ══════════════════════════════════════════════════════════════
+// KERN NAVIGATION
+// ══════════════════════════════════════════════════════════════
+
+const KERNEN = {
+  vriezenveen:       { lng:6.6400, lat:52.4265, zoom:14.0, label:'Vriezenveen' },
+  westerhaar:        { lng:6.7600, lat:52.4380, zoom:13.5, label:'Westerhaar-Vr.veensewijk' },
+  denham:            { lng:6.5820, lat:52.4650, zoom:13.8, label:'Den Ham' },
+  bruinehaar:        { lng:6.7050, lat:52.4560, zoom:14.2, label:'Bruinehaar' },
+  vriezenveensewijk: { lng:6.7290, lat:52.4200, zoom:14.0, label:'Vriezenveensewijk' },
+  marienberg:        { lng:6.5760, lat:52.5010, zoom:13.5, label:'Mariënberg' },
+};
+
+function flyToKern(kern) {
+  const el = document.getElementById('kern-select');
+  if (!kern) return;
+  const k = KERNEN[kern];
+  if (!k) return;
+  map.flyTo({ center:[k.lng, k.lat], zoom:k.zoom, speed:1.4, curve:1.3 });
+  // Reset select to placeholder after flying
+  if (el) setTimeout(() => { el.value = ''; }, 800);
 }
 
 // ══════════════════════════════════════════════════════════════
