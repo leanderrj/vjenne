@@ -10,7 +10,7 @@
 <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet"/>
 <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="data/kadaster/adressen_compact.js"></script>
+<script src="data/kadaster/adressen_twenterand.js"></script>
 <style>
   :root {
     --bg:       #08080e;
@@ -44,8 +44,11 @@
     display:flex; align-items:center; gap:0; padding:0 18px;
   }
   #topbar .pub { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--t3); font-weight:500; margin-right:20px; white-space:nowrap; }
-  #topbar h1  { font-family:var(--serif); font-size:17px; font-weight:700; color:var(--t1); margin-right:auto; white-space:nowrap; }
+  #topbar h1  { font-family:var(--serif); font-size:17px; font-weight:700; color:var(--t1); margin-right:auto; white-space:nowrap; cursor:pointer; user-select:none; }
+  #topbar h1:hover { color:var(--accent); }
   #topbar h1 span { color:var(--accent); }
+  #topbar h1 .h1-arrow { font-size:11px; color:var(--t3); margin-left:3px; transition:color .15s; }
+  #topbar h1:hover .h1-arrow { color:var(--accent); }
   .topbar-pill {
     display:flex; align-items:center; gap:6px; padding:5px 11px;
     border:1px solid var(--border2); border-radius:3px;
@@ -484,7 +487,9 @@
 <!-- ── TOP BAR ── -->
 <header id="topbar">
   <span class="pub">Woningmarkt analyse</span>
-  <h1>Vriezenveen <span>·</span> <span id="nav-gemeente">Twenterand</span></h1>
+  <h1 onclick="openKernSelect()" title="Selecteer een kern">
+    <span id="nav-kern">Twenterand</span> <span class="h1-arrow">▾</span>
+  </h1>
 
   <div class="topbar-sep"></div>
 
@@ -895,7 +900,10 @@ let currentStyle = 'dark';
 let layerOn = { prices:true, buildings:true, migration:true, newbuilds:false };
 let _prevGemeenteEra = null;
 
+// Gemeente Twenterand centre (used for distance-based WOZ proxy)
 const VV = {lng:6.6400, lat:52.4265};
+// Gemeente bounding centre — used for initial map view
+const TW_CENTRE = {lng:6.660, lat:52.455};
 const MAP_STYLES = {
   dark:      'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
   satellite: 'https://tiles.stadiamaps.com/styles/alidade_satellite.json',
@@ -909,8 +917,8 @@ const MAP_STYLES = {
 const map = new maplibregl.Map({
   container: 'map',
   style: MAP_STYLES.dark,
-  center: [VV.lng, VV.lat],
-  zoom: 13.5, pitch: 0, bearing: 0, antialias: true,
+  center: [TW_CENTRE.lng, TW_CENTRE.lat],
+  zoom: 11.5, pitch: 0, bearing: 0, antialias: true,
 });
 
 map.addControl(new maplibregl.NavigationControl({showCompass:false}), 'bottom-right');
@@ -975,25 +983,35 @@ function addPriceHeatmap() {
 
 // ── BAG building dots ──────────────────────────────────────────
 function buildBldgGeoJSON() {
-  // Use all dots — no sampling for full resolution
+  // PDOK_COORDS format: [lng, lat, bj, adres, kernIdx]
+  // kernIdx: 0=Vriezenveen,1=Den Ham,2=Mariënberg,3=Westerhaar,4=Vriezenveensewijk,5=Bruinehaar
+  // KERN_NAMES defined in adressen_twenterand.js
   return {
     type: 'FeatureCollection',
-    features: PDOK_COORDS.map(([lng, lat, bj, adres]) => {
-      // Spatial value estimate: distance from centre
-      const dlat=(lat-VV.lat)/0.035, dlng=(lng-VV.lng)/0.055;
+    features: PDOK_COORDS.map(([lng, lat, bj, adres, kernIdx]) => {
+      // Per-kern centre for WOZ spatial proxy
+      const kernCentres = [
+        {lng:6.6400,lat:52.4265}, // Vriezenveen
+        {lng:6.5820,lat:52.4650}, // Den Ham
+        {lng:6.5760,lat:52.5010}, // Mariënberg
+        {lng:6.7600,lat:52.4380}, // Westerhaar
+        {lng:6.7290,lat:52.4200}, // Vriezenveensewijk
+        {lng:6.7050,lat:52.4560}, // Bruinehaar
+      ];
+      const ctr = kernCentres[kernIdx] || VV;
+      const dlat=(lat-ctr.lat)/0.035, dlng=(lng-ctr.lng)/0.055;
       const dist = Math.sqrt(dlat*dlat + dlng*dlng);
       const val = Math.max(0, Math.min(1, 1 - dist*0.7 + (Math.sin(lng*317+lat*211)*0.1)));
-      // Koop/huur heuristic: pre-1970 centre = more huur; newer = more koop
       const koop = bj >= 1980 ? (val > 0.4 ? 1 : 0) : (val > 0.6 ? 1 : 0);
       const m2 = estimateM2(bj);
       const isNew = bj >= 2015;
-      // Parse postcode from adres string
       const pc = adres ? (adres.match(/\d{4}[A-Z]{2}/)||[''])[0] : '';
       const straat = adres ? adres.split(',')[0] : '';
+      const kern = (typeof KERN_NAMES !== 'undefined' && KERN_NAMES[kernIdx]) || 'Twenterand';
       return {
         type: 'Feature',
         geometry: { type:'Point', coordinates:[lng, lat] },
-        properties: { bj: bj||1970, val: +val.toFixed(3), koop, m2, isNew: isNew?1:0, adres: adres||'', straat, pc }
+        properties: { bj: bj||1970, val: +val.toFixed(3), koop, m2, isNew: isNew?1:0, adres: adres||'', straat, pc, kern, kernIdx: kernIdx||0 }
       };
     })
   };
@@ -1102,7 +1120,7 @@ function addBuildingDots() {
       const eTxt = eGap <= 0 ? 'bereikbaar' : `−€${Math.round(eGap/1000)}k`;
       showTip(e.point,
         `<strong>${p.straat || p.adres}</strong>` +
-        `<br/><span style="color:var(--t3);font-size:10px">${p.pc} · ${p.bj} · ~${p.m2}m² · €${Math.round(bldgWoz/1000)}k</span>` +
+        `<br/><span style="color:var(--t3);font-size:10px">${p.pc} · ${p.kern||''} · ${p.bj} · ~${p.m2}m² · €${Math.round(bldgWoz/1000)}k</span>` +
         `<br/><span style="font-size:10px;margin-top:4px;display:inline-block">` +
         `<span style="color:var(--t3)">S</span> <span style="color:${sCol}">${sTxt}</span>` +
         `<span style="color:var(--border2)"> · </span>` +
@@ -1454,7 +1472,8 @@ function openBldgCard(p) {
   const pc = p.pc || (parts[1]||'').trim();
 
   document.getElementById('bc-address').textContent = street;
-  document.getElementById('bc-postcode').textContent = pc + (p.bj ? ` · Gebouwd ${p.bj}` : '');
+  const kernLabel = p.kern ? ` · ${p.kern}` : '';
+  document.getElementById('bc-postcode').textContent = pc + (p.bj ? ` · Gebouwd ${p.bj}` : '') + kernLabel;
   document.getElementById('bc-bj').textContent = p.bj || '—';
   document.getElementById('bc-m2').textContent = `~${m2} m²`;
   document.getElementById('bc-woz').textContent = '€' + Math.round(bldgWoz/1000) + 'k';
@@ -1642,13 +1661,24 @@ const KERNEN = {
 };
 
 function flyToKern(kern) {
-  const el = document.getElementById('kern-select');
+  const sel = document.getElementById('kern-select');
   if (!kern) return;
   const k = KERNEN[kern];
   if (!k) return;
   map.flyTo({ center:[k.lng, k.lat], zoom:k.zoom, speed:1.4, curve:1.3 });
-  // Reset select to placeholder after flying
-  if (el) setTimeout(() => { el.value = ''; }, 800);
+  // Update h1 to show selected kern name
+  const h1label = document.getElementById('nav-kern');
+  if (h1label) h1label.textContent = k.label;
+  if (sel) setTimeout(() => { sel.value = ''; }, 800);
+}
+
+function openKernSelect() {
+  // Simulate a click on the kern-select dropdown
+  const sel = document.getElementById('kern-select');
+  if (!sel) return;
+  sel.focus();
+  // Dispatch a mousedown to trigger the native dropdown
+  sel.dispatchEvent(new MouseEvent('mousedown', {bubbles:true}));
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1760,7 +1790,7 @@ function updateStarterCard(year, kc, price) {
 function updateGemeenteContext(year) {
   const isOld = year <= 2001;
   const name  = isOld ? 'Vriezenveen' : 'Twenterand';
-  ['nav-gemeente', 'nav-gemeente-badge'].forEach(id => {
+  ['nav-kern', 'nav-gemeente', 'nav-gemeente-badge'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = name;
   });
